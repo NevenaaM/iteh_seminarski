@@ -141,4 +141,16 @@ class Broker
 
         return null;
     }
+
+    public function vratiPodatkeZaGrafik(){
+        $rezultat = $this->konekcija->query("SELECT d.naziv, count(n.id) as brojKarataProdatih FROM narudzbina n join dogadjaj d on n.dogadjajID = d.dogadjajID join user u on n.userID = u.userID WHERE n.status = 'Odobren' group by  d.dogadjajID");
+
+        $narudzbine = [];
+
+        while ($red = $rezultat->fetch_object()){
+            $narudzbine[] = $red;
+        }
+
+        return $narudzbine;
+    }
 }

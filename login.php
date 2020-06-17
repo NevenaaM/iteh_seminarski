@@ -13,7 +13,8 @@ if(isset($_POST['login'])){
     $uspesno = $db->login($username,$password);
 
     if($uspesno){
-        $poruka = "USPESNO LOGOVANJE";
+		$poruka = "USPESNO LOGOVANJE";
+		header("Location: index.php");
     }else{
         $poruka = "Doslo je do greske prilikom logovanja, proverite podatke";
     }

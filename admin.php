@@ -193,6 +193,16 @@ if(isset($_POST['unosSlike'])){
                                 </table>
                             </div>
                         </section>
+                        <section id="two">
+                            <div class="inner">
+                                <header class="major">
+                                    <h2>Graficki prikaz kupljenih karata</h2>
+                                </header>
+                                <div>
+                                    <div id="piechart_3d" style="width: 900px; height: 500px;"></div>
+                                </div>
+                            </div>
+                        </section>
 					</div>
 
                 <?php include "footer.php"; ?>
@@ -207,10 +217,50 @@ if(isset($_POST['unosSlike'])){
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
             <script src="assets/js/datepicker.js"></script>
+            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
             <script>
                 $( function() {
                     $( "#datum" ).datepicker({ dateFormat: 'yy-mm-dd' });
                 } );
+            </script>
+            <script type="text/javascript">
+                google.charts.load("current", {packages:["corechart"]});
+                google.charts.setOnLoadCallback(srediPodatke);
+
+                function srediPodatke(){
+                    $.ajax({
+                        url : 'podaciZaGrafik.php',
+                        success: function(podaci){
+                            drawChart(podaci);
+                        }
+                    });
+                }
+
+                function drawChart(podaci) {
+                    
+                    var podaciNiz = JSON.parse(podaci);
+
+                    var nizZaGrafik = [];
+                    nizZaGrafik.push(['Dogadjaj','Broj kupljenih karata']);
+
+                    for (i = 0; i < podaciNiz.length; i++) {
+                        nizZaGrafik.push([podaciNiz[i].naziv,parseInt(podaciNiz[i].brojKarataProdatih)]);
+                    }
+
+                    console.log(nizZaGrafik);
+
+                    var data = google.visualization.arrayToDataTable(nizZaGrafik);
+
+                    var options = {
+                    title: 'Broj kupljenih karata po dogadjaju',
+                    is3D: true,
+                    };
+
+                    var chart = new google.visualization.PieChart(document.getElementById('piechart_3d'));
+                    chart.draw(data, options);
+                }
+            </script>
 
 	</body>
 </html>
