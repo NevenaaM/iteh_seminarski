@@ -1,4 +1,4 @@
-<?php
+ <?php
 require 'flight/Flight.php';
 require '../Broker.php';
 
@@ -35,7 +35,7 @@ Flight::route('POST /registracija', function()
    $rez = $db->registruj($imePrezime,$username,$password);
     if($rez)
     {
-        $response = "Uspesno registrovan korisnik";
+        $response = "Uspesno registrovan korisnik!";
     }
     else
     {
