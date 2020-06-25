@@ -9,9 +9,15 @@ class Broker
         $this->konekcija->set_charset("utf8");
     }
 
-    public function getAktivniDogadjaji()
+    public function getAktivniDogadjaji($tip,$sort)
     {
-        $rezultat = $this->konekcija->query("SELECT * FROM dogadjaj where brojKarata > 0");
+        $upit = "SELECT * FROM dogadjaj where brojKarata ";
+
+        if($tip && $sort){
+            $upit .= " ORDER BY " . $tip ." " . $sort;
+        }
+
+        $rezultat = $this->konekcija->query($upit);
 
         $dogadjaji = [];
 
@@ -152,5 +158,21 @@ class Broker
         }
 
         return $narudzbine;
+    }
+
+    public function obrisiDogadjaj($dogadjaj)
+    {
+        return $this->konekcija->query("DELETE FROM dogadjaj WHERE dogadjajID =".$dogadjaj);
+    }
+
+    public function vratiNarudzbineZaDogadjaj($id)
+    {
+        $rezultat = $this->konekcija->query("SELECT * FROM narudzbina n join dogadjaj d on n.dogadjajID = d.dogadjajID join user u on n.userID = u.userID where n.dogadjajID = ".$id);
+
+        while ($red = $rezultat->fetch_object()){
+            return true;
+        }
+
+        return false;
     }
 }

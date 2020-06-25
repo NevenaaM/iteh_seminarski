@@ -4,7 +4,15 @@ require "Broker.php";
 
 $db = new Broker();
 
-$dogadjaji = $db->getAktivniDogadjaji();
+$sort = null;
+$tip = null;
+
+if(isset($_GET['tip']) && isset($_GET['sort'])){
+    $tip = $_GET['tip'];
+    $sort = $_GET['sort'];
+}
+
+$dogadjaji = $db->getAktivniDogadjaji($tip,$sort);
 
 ?>
 
@@ -48,7 +56,13 @@ $dogadjaji = $db->getAktivniDogadjaji();
 							<div class="inner">
 								<header class="major">
 									<h2>Trenutno u prodaji</h2>
-								</header>
+                                    <h3>Sortiraj:</h3>
+                                    <a class="button" href="index.php?tip=datum&sort=asc">Datumu rastuce</a>
+                                    <a class="button" href="index.php?tip=datum&sort=desc">Datumu opadajuce</a>
+                                    <a class="button" href="index.php?tip=brojKarata&sort=asc">Broju karata rastuce</a>
+                                    <a class="button" href="index.php?tip=brojKarata&sort=desc">Broju karata opadajuce</a>
+
+                                </header>
 								<p>Ovde mozete videti trenutno aktivne dogadjaje u nasoj ponudi</p>
 								<table class="table">
 									<thead>

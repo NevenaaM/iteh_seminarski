@@ -7,12 +7,21 @@ $db = new Broker();
 $poruka = "";
 $narudzbine = $db->vratiNarduzbine();
 
-$curl = curl_init("http://localhost/karte/api/dogadjaji");
-curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($curl, CURLOPT_POST, false);
-$curl_odgovor = curl_exec($curl);
-$dogadjaji = json_decode($curl_odgovor);
-curl_close($curl);
+if(isset($_POST['brisanje'])){
+    $dogadjaj = $db->ocistiVrednost(trim($_POST["dogadjaj"]));
+
+    if($db->vratiNarudzbineZaDogadjaj($dogadjaj)){
+        $poruka = "Dogadjaj vec ima narudzbine i ne moze se obrisati";
+    }else{
+        $uspesno = $db->obrisiDogadjaj($dogadjaj);
+
+        if($uspesno){
+            $poruka = "USPESNO OBRISAN DOGADJAJ";
+        }else{
+            $poruka = "Doslo je do greske prilikom brisanja, pokusajte kasnije";
+        }
+    }
+}
 
 if(isset($_POST['unos'])){
     $naziv = $db->ocistiVrednost(trim($_POST["naziv"]));
@@ -48,10 +57,13 @@ if(isset($_POST['unosSlike'])){
     } else {
         $poruka = "Doslo je do greske prilikom uplouda slike";
     }
-
-
 }
-
+$curl = curl_init("http://localhost/karte/api/dogadjaji");
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($curl, CURLOPT_POST, false);
+    $curl_odgovor = curl_exec($curl);
+    $dogadjaji = json_decode($curl_odgovor);
+    curl_close($curl);
 ?>
 
 
@@ -139,7 +151,29 @@ if(isset($_POST['unosSlike'])){
                                 <p><?php echo $poruka ?></p>
                             </div>
                         </section>
+                        <section id="two">
+                            <div class="inner">
+                                <header class="major">
+                                    <h2>Brisanje dogadjaja</h2>
+                                </header>
+                                <form method="post" action="" enctype="multipart/form-data">
+                                    <label for="dogadjaj">Dogadjaj</label>
+                                    <select name="dogadjaj" >
+                                        <?php
+                                        foreach ($dogadjaji as $dogadjaj){
+                                            ?>
+                                            <option value="<?= $dogadjaj->dogadjajID ?>"><?= $dogadjaj->naziv ?></option>
+                                            <?php
+                                        }
+                                        ?>
+                                    </select>
+                                    <label for="unosSlike">Izbrisi dogadjaj</label>
+                                    <input type="submit" name="brisanje" value="Obrisi dogadjaj" id="brisanje">
 
+                                </form>
+                                <p><?php echo $poruka ?></p>
+                            </div>
+                        </section>
                         <section id="two">
                             <div class="inner">
                                 <header class="major">
